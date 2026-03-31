@@ -2,10 +2,9 @@
 
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\OrdenController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Rutas para la gestión de clientes
-Route::apiResource('clientes', ClienteController::class);
+Route::apiResource('customers', CustomerController::class);
 // Rutas para la gestión de órdenes
-Route::apiResource('ordenes', OrdenController::class);
+Route::apiResource('orders', OrderController::class);
