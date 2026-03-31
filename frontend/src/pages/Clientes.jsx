@@ -1,33 +1,36 @@
 import { useState } from "react";
+import axios from "axios";
+import { useEffect } from "react";
+
+const API_URL = "http://localhost:8000/api/clientes";
+
 export function Clientes() {
-  // 1. Datos simulados (Mock Data).
-  const [clientes, setClientes] = useState([
-    { id: 1, nombre: "Gian Solarte", email: "g.f.solarterodriguez@gmail.com", telefono: "3009876543",},
-    { id: 2, nombre: "Ana Gómez", email: "ana@empresa.com", telefono: "3119876543",},
-    { id: 3, nombre: "Juan Pérez", email: "juan@empresa.com", telefono: "3001234567",},
-    { id: 4, nombre: "Carlos Ruiz", email: "carlos@empresa.com", telefono: "3205554433",},
-  ]);
-  // 1.1. Estado para el formulario
+  // 1. Estado inicial vacío.
+  const [clientes, setClientes] = useState([]);
+  const [editandoId, setEditandoId] = useState(null);
+
+  // 1.1. Cargar datos de la API al iniciar
+  useEffect(() => {
+    obtenerClientes();
+  }, []);
+
+  // 1.1.1. Cargar datos de la API al iniciar
+  const obtenerClientes = async () => {
+    const respuesta = await axios.get(API_URL);
+    setClientes(respuesta.data);
+  };
+
+  // 1.2. Estado para el formulario
   const [formulario, setFormulario] = useState({
     nombre: "",
     email: "",
     telefono: "",
   });
 
-  // 1.1.1. Estado para mostrar/ocultar el formulario
+  // 1.2.1. Estado para mostrar/ocultar el formulario
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
-  // 2. Función para eliminar
-  const eliminarCliente = (idParaBorrar) => {
-    // filter() crea un arreglo nuevo con todos los clientes EXCEPTO el que coincida con el id
-    const nuevaLista = clientes.filter(
-      (cliente) => cliente.id !== idParaBorrar,
-    );
-    // setClientes avisa a React y redibuja la tabla
-    setClientes(nuevaLista);
-  };
-
-  // 3. Captura lo que escribes en los inputs
+  // 2. Captura lo que escribes en los inputs
   const manejarCambio = (e) => {
     setFormulario({
       ...formulario,
@@ -35,30 +38,57 @@ export function Clientes() {
     });
   };
 
-  // 3.1. Guarda el nuevo cliente en la tabla
-  const guardarCliente = (e) => {
+  // 2.1. Guarda el nuevo cliente en la tabla
+  const guardarCliente = async (e) => {
     e.preventDefault(); // Evita que la página recargue al enviar el form
-  
-    // 3.1.1. Validar que no haya campos vacíos
+
+    // 2.1.1. Validar que no haya campos vacíos
     if (!formulario.nombre || !formulario.email || !formulario.telefono) {
       alert("Por favor llena todos los campos");
       return;
     }
+    try {
+      if (editandoId) {
+        const respuesta = await axios.put(`${API_URL}/${editandoId}`, formulario);
 
-    // 3.2. Crear un ID temporal
-    const nuevoId =
-      clientes.length > 0 ? Math.max(...clientes.map((c) => c.id)) + 1 : 1;
+        // Agregamos la respuesta a la lista
+        // Actualizamos la lista local
+        setClientes(clientes.map(c => c.id === editandoId ? respuesta.data : c));
+        setFormulario({ nombre: '', email: '', telefono: '' });
+        setMostrarFormulario(false);
+        setEditandoId(null);
+      } else {
+        // Creacion de POST
+        const respuesta = await axios.post(API_URL, formulario);
+        setClientes([...clientes, respuesta.data]);
+      }
 
-    const clienteParaAgregar = {
-      id: nuevoId,
-      nombre: formulario.nombre,
-      email: formulario.email,
-      telefono: formulario.telefono,
-    };
+      // Limpiamos el formulario
+      setFormulario({ nombre: '', email: '', telefono: '' });
+      setMostrarFormulario(false);
+    } catch(error){
+      alert("Error al guardar en la base de datos");
+    }
+  };
 
-    // 3.3. Actualiza la tabla y limpia el formulario
-    setClientes([...clientes, clienteParaAgregar]);
-    setFormulario({ nombre: "", email: "", telefono: "" });
+  // 3. ELIMINAR CLIENTE
+  const eliminarCliente = async (id) => {
+    if (window.confirm("¿Seguro que deseas eliminar este cliente?")) {
+      try {
+        await axios.delete(`${API_URL}/${id}`);
+        // Quitamos de la vista el que acabamos de borrar en la DB
+        setClientes(clientes.filter((c) => c.id !== id));
+      } catch (error) {
+        alert("No se pudo eliminar el cliente");
+      }
+    }
+  };
+
+  // 4. Cargar datos del cliente en el formulario para editarlos
+  const cargarParaEditar = (cliente) => {
+    setFormulario({ nombre: cliente.nombre, email: cliente.email, telefono: cliente.telefono });
+    setEditandoId(cliente.id);
+    setMostrarFormulario(true);
   };
 
   return (
@@ -131,7 +161,7 @@ export function Clientes() {
               <td>{cliente.email}</td>
               <td>{cliente.telefono}</td>
               <td className="text-center">
-                <button className="btn btn-warning">Editar</button>
+                <button onClick={() => cargarParaEditar(cliente)} className="btn btn-warning">Editar</button>
 
                 <button
                   onClick={() => eliminarCliente(cliente.id)}
