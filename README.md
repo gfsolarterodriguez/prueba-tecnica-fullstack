@@ -45,19 +45,20 @@ php artisan migrate:fresh
 
 # Levantar el servidor de desarrollo para la API
 php artisan serve
-3. Cómo levantar el Frontend (React)
+```
+## 3. Cómo levantar el Frontend (React)
 En una terminal independiente, ubicarse en la raíz del monorepo y ejecutar:
 
-Bash
-# Ingresar a la carpeta del frontend
+### Ingresar a la carpeta del frontend:
 cd frontend
 
-# Instalar las dependencias de Node
+### Instalar las dependencias de Node:
 npm install
 
-# Iniciar el servidor de desarrollo de Vite
+### Iniciar el servidor de desarrollo de Vite.
 npm run dev
-4. Estructura del Proyecto (Monorepo)
-/backend: Contiene la lógica del servidor, modelos (Customer, Order), controladores y migraciones desarrolladas en Laravel.
 
-/frontend: Contiene la interfaz de usuario, componentes y servicios de consumo de API desarrollados en React.
+## 4. Estructura del Proyecto (Monorepo)
+* Backend: Contiene la lógica del servidor, modelos (Customer, Order), controladores y migraciones desarrolladas en Laravel.
+
+* Frontend: Contiene la interfaz de usuario, componentes y servicios de consumo de API desarrollados en React.
