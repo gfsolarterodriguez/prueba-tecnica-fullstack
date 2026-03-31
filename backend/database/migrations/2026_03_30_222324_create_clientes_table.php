@@ -10,11 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('clientes', function (Blueprint $table) {
+        Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('fullName');
             $table->string('email')->unique();
-            $table->string('telefono');
+            $table->string('phone')->nullable();
+            $table->boolean('isActive')->default(true);
             $table->timestamps(); // Crea created_at y updated_at
         });
     }

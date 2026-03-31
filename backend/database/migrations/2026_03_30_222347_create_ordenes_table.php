@@ -10,12 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('ordenes', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('cliente');
-            $table->string('producto');
-            $table->decimal('total', 10, 2);
-            $table->string('estado'); // Pendiente, Aprobada, Denegada
+            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->string('orderNumber');
+            $table->enum('status', ['CREATED', 'PAID', 'CANCELLED'])->default('CREATED');
+            $table->decimal('totalAmount', 10, 2);
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
