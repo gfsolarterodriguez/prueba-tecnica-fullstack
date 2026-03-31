@@ -25,6 +25,7 @@ export function Clientes() {
     fullName: "",
     email: "",
     phone: "",
+    isActive: true,
   });
 
   // 1.2.1. Estado para mostrar/ocultar el formulario
@@ -32,9 +33,10 @@ export function Clientes() {
 
   // 2. Captura lo que escribes en los inputs
   const manejarCambio = (e) => {
+    const { name, value, type, checked } = e.target;
     setFormulario({
       ...formulario,
-      [e.target.name]: e.target.value,
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
@@ -43,7 +45,7 @@ export function Clientes() {
     e.preventDefault(); // Evita que la página recargue al enviar el form
 
     // 2.1.1. Validar que no haya campos vacíos
-    if (!formulario.fullName || !formulario.email || !formulario.phone) {
+    if (!formulario.fullName || !formulario.email ) {
       alert("Por favor llena todos los campos");
       return;
     }
@@ -155,6 +157,18 @@ export function Clientes() {
               className="form-input"
             />
           </div>
+
+          <div className="form-group">
+            <label>
+              <input
+                type="checkbox"
+                name="isActive"
+                checked={formulario.isActive}
+                onChange={manejarCambio}
+              />
+              {" "}Cliente Activo
+            </label>
+          </div>
           <button type="submit" className="btn btn-success btn-submit">
             {editandoId ? "Actualizar Cliente" : "Guardar Cliente"}
           </button>
@@ -170,6 +184,7 @@ export function Clientes() {
             <th>Nombre</th>
             <th>Email</th>
             <th>Teléfono</th>
+            <th>Estado</th>
             <th className="text-center">Acciones</th>
           </tr>
         </thead>
@@ -180,7 +195,8 @@ export function Clientes() {
               <td>{cliente.id}</td>
               <td>{cliente.fullName}</td>
               <td>{cliente.email}</td>
-              <td>{cliente.phone}</td>
+              <td>{cliente.phone || 'N/A'}</td>
+              <td>{cliente.isActive ? 'Activo' : 'Inactivo'}</td>
               <td className="text-center">
                 <button onClick={() => cargarParaEditar(cliente)} className="btn btn-warning">Editar</button>
 
