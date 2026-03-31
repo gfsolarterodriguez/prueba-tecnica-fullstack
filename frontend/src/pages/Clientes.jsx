@@ -31,7 +31,7 @@ export function Clientes() {
   // 1.2.1. Estado para mostrar/ocultar el formulario
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
-  // 2. Captura lo que escribes en los inputs
+  // 2. Manejo de inputs
   const manejarCambio = (e) => {
     const { name, value, type, checked } = e.target;
     setFormulario({
@@ -69,16 +69,13 @@ export function Clientes() {
       setFormulario({ fullName: '', email: '', phone: '', isActive: true,});
       setMostrarFormulario(false);
     } catch (error) {
-        console.error("--- DEBUG DE ERROR ---");
+        console.error
         if (error.response) {
-          // El servidor respondió con un error (422, 500, etc.)
           console.log("Respuesta del servidor:", error.response.data);
           console.log("Código de estado:", error.response.status);
           
-          // Esta alerta te dirá el error real (ej: "La columna tal no existe")
           alert(`ERROR ${error.response.status}: ${JSON.stringify(error.response.data.message || error.response.data)}`);
         } else if (error.request) {
-          // La petición se hizo pero el servidor no respondió (CORS o apagado)
           console.log("No hubo respuesta del servidor:", error.request);
           alert("Error: El servidor no responde. Revisa si Laravel está corriendo.");
         } else {

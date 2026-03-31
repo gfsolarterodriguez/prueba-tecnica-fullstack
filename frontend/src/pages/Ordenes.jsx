@@ -17,7 +17,6 @@ export function Ordenes() {
   }, []);
 
   // 1.1.1. Estado para mostrar/ocultar el formulario
-  // Ajustado para traer tanto órdenes como clientes
   const obtenerDatos = async () => {
       try {
         const [resOrdenes, resClientes] = await Promise.all([

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     public function index() { 
-        // Traemos las órdenes incluyendo la información del cliente vinculado [cite: 23, 41]
+        // Traemos las órdenes incluyendo la información del cliente vinculado
         return Order::with('customer')->get();
     }
 

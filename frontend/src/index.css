@@ -68,7 +68,7 @@ body {
 .form-input {
   flex: 1;
   padding: 8px;
-  border: 1px solid #ccc; /* Añadido para mejor visibilidad */
+  border: 1px solid #ccc;
   border-radius: 4px;
 }
 

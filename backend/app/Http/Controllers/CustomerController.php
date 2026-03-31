@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 class CustomerController extends Controller
 {
     public function index() { 
-        // Incluye la relación con Customer para el listado del frontend
         return Customer::all();
     }
 
