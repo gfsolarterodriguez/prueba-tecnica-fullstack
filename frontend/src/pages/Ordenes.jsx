@@ -2,31 +2,43 @@ import { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 
-const API_URL = "http://localhost:8000/api/ordenes";
+const API_URL = "http://localhost:8000/api/orders";
+const CUSTOMERS_API = "http://localhost:8000/api/customers";
 
 export function Ordenes() {
   // 1. Estado inicial vacío.
   const [ordenes, setOrdenes] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [editandoId, setEditandoId] = useState(null);
 
   // 1.1. Estado para el formulario
   useEffect(() => {
-    obtenerOrdenes();
+    obtenerDatos();
   }, []);
 
   // 1.1.1. Estado para mostrar/ocultar el formulario
-  const obtenerOrdenes = async () => {
-      const respuesta = await axios.get(API_URL);
-      setOrdenes(respuesta.data);
+  // Ajustado para traer tanto órdenes como clientes
+  const obtenerDatos = async () => {
+      try {
+        const [resOrdenes, resClientes] = await Promise.all([
+            axios.get(API_URL),
+            axios.get(CUSTOMERS_API)
+        ]);
+        setOrdenes(resOrdenes.data);
+        setClientes(resClientes.data);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
     };
   
   
   // 1.2. Estado para el formulario
   const [formulario, setFormulario] = useState({
-    cliente: "",
-    producto: "",
-    total: "",
-    estado: "",
+    customer_id: "",
+    orderNumber: "",
+    totalAmount: "",
+    status: "",
+    notes: ""
   });  
 
   // 1.2.1. Estado para mostrar/ocultar el formulario
@@ -45,7 +57,7 @@ export function Ordenes() {
     e.preventDefault(); // Evita que la página recargue al enviar el form
 
     // 2.1.1. Validar que no haya campos vacíos
-    if (!formulario.cliente || !formulario.producto || !formulario.total || !formulario.estado) {
+    if (!formulario.customer_id || !formulario.orderNumber || !formulario.totalAmount || !formulario.status) {
       alert("Por favor llena todos los campos de la solicitud.");
       return;
     }
@@ -63,7 +75,7 @@ export function Ordenes() {
       }
       
       // Limpiamos el formulario
-      setFormulario({ cliente: "", producto: "", total: "", estado: "" });
+      setFormulario({ customer_id: "", orderNumber: "", totalAmount: "", status: "", notes: "" });
       setMostrarFormulario(false);
     } catch (error) {
       console.error("Error al guardar:", error);
@@ -87,10 +99,11 @@ export function Ordenes() {
   // 4. Cargar datos de la orden en el formulario para editarla
   const cargarParaEditar = (orden) => {
     setFormulario({ 
-      cliente: orden.cliente, 
-      producto: orden.producto, 
-      total: orden.total, 
-      estado: orden.estado 
+      customer_id: orden.customer_id, 
+      orderNumber: orden.orderNumber, 
+      totalAmount: orden.totalAmount, 
+      status: orden.status,
+      notes: orden.notes || ""
     });
     setEditandoId(orden.id);
     setMostrarFormulario(true);
@@ -102,7 +115,11 @@ export function Ordenes() {
 
       {/* Botón de acción*/}
       <button
-        onClick={() => setMostrarFormulario(!mostrarFormulario)}
+        onClick={() => {
+            setMostrarFormulario(!mostrarFormulario);
+            setEditandoId(null);
+            setFormulario({ customer_id: "", orderNumber: "", totalAmount: "", status: "", notes: "" });
+        }}
         className="btn btn-success"
         style={{ marginBottom: "15px" }}
       >
@@ -115,47 +132,60 @@ export function Ordenes() {
           <h3 className="form-title">Gestión de Órdenes</h3>
 
           <div className="form-group">
-            <input
-              type="text"
-              name="cliente"
-              placeholder="Cliente"
-              value={formulario.cliente}
+            {/* Este Select muestra los clientes de la DB */}
+            <select
+              name="customer_id"
+              value={formulario.customer_id}
               onChange={manejarCambio}
               className="form-input"
-            />
+            >
+              <option value="">Seleccione Cliente...</option>
+              {clientes.map(c => (
+                  <option key={c.id} value={c.id}>{c.fullName}</option>
+              ))}
+            </select>
 
             <input
               type="text"
-              name="producto"
-              placeholder="Producto"
-              value={formulario.producto}
+              name="orderNumber"
+              placeholder="Número de Orden"
+              value={formulario.orderNumber}
               onChange={manejarCambio}
               className="form-input"
             />
 
             <input
               type="number"
-              name="total"
+              name="totalAmount"
               placeholder="Total ($)"
-              value={formulario.total}
+              value={formulario.totalAmount}
               onChange={manejarCambio}
               className="form-input"
             />
 
             <select
-              name="estado"
-              value={formulario.estado}
+              name="status"
+              value={formulario.status}
               onChange={manejarCambio}
               className="form-input"
             >
               <option value="">Seleccione Estado...</option>
-              <option value="Pendiente">Pendiente</option>
-              <option value="Aprobada">Aprobada</option>
-              <option value="Denegada">Denegada</option>
+              <option value="CREATED">CREATED</option>
+              <option value="PAID">PAID</option>
+              <option value="CANCELLED">CANCELLED</option>
             </select>
+
+            <input
+              type="text"
+              name="notes"
+              placeholder="Notas (opcional)"
+              value={formulario.notes}
+              onChange={manejarCambio}
+              className="form-input"
+            />
           </div>
           <button type="submit" className="btn btn-success btn-submit">
-            Guardar Orden
+            {editandoId ? "Actualizar Orden" : "Guardar Orden"}
           </button>
         </form>
       )}
@@ -167,7 +197,7 @@ export function Ordenes() {
           <tr>
             <th>ID</th>
             <th>Cliente</th>
-            <th>Producto</th>
+            <th># Orden</th>
             <th>Total</th>
             <th>Estado</th>
             <th className="text-center">Acciones</th>
@@ -178,10 +208,13 @@ export function Ordenes() {
           {ordenes.map((orden) => (
             <tr key={orden.id}>
               <td>{orden.id}</td>
-              <td>{orden.cliente}</td>
-              <td>{orden.producto}</td>
-              <td>${orden.total}</td>
-              <td>{orden.estado}</td>
+
+              {/* Mostramos el nombre del cliente relacionado */}
+
+              <td>{orden.customer?.fullName || "Sin asignar"}</td>
+              <td>{orden.orderNumber}</td>
+              <td>${orden.totalAmount}</td>
+              <td>{orden.status}</td>
               <td className="text-center">
                 <button onClick={() => cargarParaEditar(orden)} className="btn btn-warning">Editar</button>
                 <button

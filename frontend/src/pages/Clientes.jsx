@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 
-const API_URL = "http://localhost:8000/api/clientes";
+const API_URL = "http://localhost:8000/api/customers";
 
 export function Clientes() {
   // 1. Estado inicial vacío.
@@ -22,9 +22,9 @@ export function Clientes() {
 
   // 1.2. Estado para el formulario
   const [formulario, setFormulario] = useState({
-    nombre: "",
+    fullName: "",
     email: "",
-    telefono: "",
+    phone: "",
   });
 
   // 1.2.1. Estado para mostrar/ocultar el formulario
@@ -43,7 +43,7 @@ export function Clientes() {
     e.preventDefault(); // Evita que la página recargue al enviar el form
 
     // 2.1.1. Validar que no haya campos vacíos
-    if (!formulario.nombre || !formulario.email || !formulario.telefono) {
+    if (!formulario.fullName || !formulario.email || !formulario.phone) {
       alert("Por favor llena todos los campos");
       return;
     }
@@ -54,7 +54,7 @@ export function Clientes() {
         // Agregamos la respuesta a la lista
         // Actualizamos la lista local
         setClientes(clientes.map(c => c.id === editandoId ? respuesta.data : c));
-        setFormulario({ nombre: '', email: '', telefono: '' });
+        setFormulario({ fullName: '', email: '', phone: '' });
         setMostrarFormulario(false);
         setEditandoId(null);
       } else {
@@ -64,10 +64,27 @@ export function Clientes() {
       }
 
       // Limpiamos el formulario
-      setFormulario({ nombre: '', email: '', telefono: '' });
+      setFormulario({ fullName: '', email: '', phone: '' });
       setMostrarFormulario(false);
-    } catch(error){
-      alert("Error al guardar en la base de datos");
+    } catch (error) {
+        console.error("--- DEBUG DE ERROR ---");
+        if (error.response) {
+          // El servidor respondió con un error (422, 500, etc.)
+          console.log("Respuesta del servidor:", error.response.data);
+          console.log("Código de estado:", error.response.status);
+          
+          // Esta alerta te dirá el error real (ej: "La columna tal no existe")
+          alert(`ERROR ${error.response.status}: ${JSON.stringify(error.response.data.message || error.response.data)}`);
+        } else if (error.request) {
+          // La petición se hizo pero el servidor no respondió (CORS o apagado)
+          console.log("No hubo respuesta del servidor:", error.request);
+          alert("Error: El servidor no responde. Revisa si Laravel está corriendo.");
+        } else {
+          console.log("Error de configuración:", error.message);
+          alert("Error: " + error.message);
+        }
+      
+      /**alert("Error al guardar en la base de datos");*/
     }
   };
 
@@ -86,7 +103,7 @@ export function Clientes() {
 
   // 4. Cargar datos del cliente en el formulario para editarlos
   const cargarParaEditar = (cliente) => {
-    setFormulario({ nombre: cliente.nombre, email: cliente.email, telefono: cliente.telefono });
+    setFormulario({ fullName: cliente.fullName, email: cliente.email, phone: cliente.phone });
     setEditandoId(cliente.id);
     setMostrarFormulario(true);
   };
@@ -97,7 +114,11 @@ export function Clientes() {
 
       {/* Botón de acción*/}
       <button
-        onClick={() => setMostrarFormulario(!mostrarFormulario)}
+        onClick={() => {
+            setMostrarFormulario(!mostrarFormulario);
+            setEditandoId(null);
+            setFormulario({ fullName: '', email: '', phone: '' });
+        }}
         className="btn btn-success"
         style={{ marginBottom: "15px" }}
       >
@@ -107,13 +128,13 @@ export function Clientes() {
       {/* BLOQUE 1: ZONA DE CAPTURA*/}
       {mostrarFormulario && (
         <form onSubmit={guardarCliente} className="form-container">
-          <h3 className="form-title">Agregar Cliente</h3>
+          <h3 className="form-title">{editandoId ? "Editar Cliente" : "Agregar Cliente"}</h3>
           <div className="form-group">
             <input
               type="text"
-              name="nombre"
+              name="fullName"
               placeholder="Nombre"
-              value={formulario.nombre}
+              value={formulario.fullName}
               onChange={manejarCambio}
               className="form-input"
             />
@@ -127,15 +148,15 @@ export function Clientes() {
             />
             <input
               type="text"
-              name="telefono"
+              name="phone"
               placeholder="Teléfono"
-              value={formulario.telefono}
+              value={formulario.phone}
               onChange={manejarCambio}
               className="form-input"
             />
           </div>
           <button type="submit" className="btn btn-success btn-submit">
-            Guardar Cliente
+            {editandoId ? "Actualizar Cliente" : "Guardar Cliente"}
           </button>
         </form>
       )}
@@ -157,9 +178,9 @@ export function Clientes() {
           {clientes.map((cliente) => (
             <tr key={cliente.id}>
               <td>{cliente.id}</td>
-              <td>{cliente.nombre}</td>
+              <td>{cliente.fullName}</td>
               <td>{cliente.email}</td>
-              <td>{cliente.telefono}</td>
+              <td>{cliente.phone}</td>
               <td className="text-center">
                 <button onClick={() => cargarParaEditar(cliente)} className="btn btn-warning">Editar</button>
 

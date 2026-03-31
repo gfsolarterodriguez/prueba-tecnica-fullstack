@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\ClienteController;
-use App\Http\Controllers\OrdenController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas para la gestión de clientes

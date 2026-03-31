@@ -80,3 +80,40 @@ body {
   color: #0056b3;
   margin-bottom: 15px;
 }
+
+/* Contenedor del menú */
+.nav-container {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #ccc;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #0056b3;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+}
+
+/* Efecto hover */
+.nav-link:hover {
+  background-color: #f0f4f8;
+  color: #003d80;
+  font-weight: bold;
+}
+
+/* Estilo para la pestaña donde estás parado */
+.nav-link.active {
+  color: #2d3748;
+  font-weight: bold;
+  background-color: #edf2f7;
+  border-bottom: 2px solid #2d3748;
+  
+  /* Bloqueo de click */
+  pointer-events: none;
+  cursor: default;
+}

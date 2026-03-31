@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Cliente extends Model
+class Customer extends Model
 {
-    protected $fillable = ['customer_id', 'orderNumber', 'status', 'totalAmount', 'notes'];
+    protected $fillable = ['fullName', 'email', 'phone', 'isActive'];
 
     // Relación: Una Order pertenece a un Customer
-    public function customer() {
-        return $this->belongsTo(Customer::class);
+    public function orders() {
+        return $this->hasMany(Order::class); 
     }
 }

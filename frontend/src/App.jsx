@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { Clientes } from './pages/Clientes';
 import { Ordenes } from './pages/Ordenes';
 import './index.css';
@@ -8,10 +8,16 @@ function App() {
     <BrowserRouter>
       <div className="container">
         {/* Menú de Navegación Superior */}
-        <nav style={{ marginBottom: '20px', paddingBottom: '15px', borderBottom: '2px solid #ccc' }}>
-          <Link to="/" style={{ marginRight: '15px', textDecoration: 'none', color: '#333', fontWeight: 'bold' }}>Inicio</Link>
-          <Link to="/clientes" style={{ marginRight: '15px', textDecoration: 'none', color: '#0056b3' }}>Clientes</Link>
-          <Link to="/ordenes" style={{ textDecoration: 'none', color: '#0056b3' }}>Órdenes</Link>
+        <nav className="nav-container">
+          <NavLink to="/" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+            Inicio
+          </NavLink>
+          <NavLink to="/clientes" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+            Clientes
+          </NavLink>
+          <NavLink to="/ordenes" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+            Órdenes
+          </NavLink>
         </nav>
 
         {/* Zona dinámica donde se inyectan los componentes */}

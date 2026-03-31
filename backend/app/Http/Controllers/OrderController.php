@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Orden;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
-class OrdenController extends Controller
+class OrderController extends Controller
 {
     public function index() { 
-        // Traemos las órdenes incluyendo la información del cliente vinculado
+        // Traemos las órdenes incluyendo la información del cliente vinculado [cite: 23, 41]
         return Order::with('customer')->get();
     }
 
@@ -19,8 +19,8 @@ class OrdenController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $orden = Orden::find($id);
-        $orden->update($request->all());
+        $order = Order::findOrFail($id);
+        $order->update($request->all());
         return Order::with('customer')->find($order->id);
     }
 
@@ -28,6 +28,4 @@ class OrdenController extends Controller
         Order::destroy($id);
         return response()->json(['message' => 'Eliminado']);
     }
-
-    
 }

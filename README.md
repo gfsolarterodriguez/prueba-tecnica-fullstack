@@ -1,20 +1,31 @@
 # Prueba Técnica Full-Stack (Laravel + React)
 
-Solución al reto técnico implementando un API REST para la gestión de Clientes (Customers) y Órdenes (Orders) con relación 1:N.
+Solución al reto técnico para la gestión de Clientes (Customers) y Órdenes (Orders) con relación 1:N. Este proyecto utiliza una arquitectura de Monorepo, integrando tanto el servidor (Backend) como el cliente (Frontend) en este mismo repositorio.
+
+## Tecnologías y Frameworks Utilizados
+
+- **Backend:** Laravel 10.x (PHP Framework)
+- **Frontend:** React 18.x (Vite)
+- **Base de Datos:** MySQL
 
 ## Requisitos Previos
-- PHP >= 8.1
-- Composer
-- Node.js >= 18
-- MySQL
+
+Para ejecutar el proyecto se requiere tener instalado:
+- **PHP:** >= 8.1
+- **Composer:** >= 2
+- **Node.js:** >= 18
+- **NPM:** >= 9
+- **MySQL:** Motor de base de datos local
 
 ## 1. Configuración de la Base de Datos
-1. Enciende tu servidor MySQL (por ejemplo, desde el panel de XAMPP).
-2. Abre tu gestor de base de datos preferido (phpMyAdmin, DBeaver, TablePlus, etc.).
-3. Crea una base de datos vacía llamada `db_gestion_pedidos` (cotejamiento recomendado: `utf8mb4_unicode_ci`).
+
+1. Iniciar el servidor MySQL (XAMPP o similar).
+2. Crear una base de datos vacía llamada `db_gestion_pedidos`.
+3. Se recomienda el cotejamiento `utf8mb4_unicode_ci`.
 
 ## 2. Cómo levantar el Backend (Laravel)
-Abre una terminal, ubícate en la raíz del proyecto y ejecuta los siguientes comandos para preparar la API:
+
+Ubicarse en la raíz del proyecto y ejecutar los siguientes comandos para preparar la API:
 
 ```bash
 # Ingresar a la carpeta del backend
@@ -23,35 +34,30 @@ cd backend
 # Instalar las dependencias de PHP
 composer install
 
-# Duplicar el archivo de entorno (si no existe el .env)
+# Crear el archivo de configuración de entorno
 cp .env.example .env
 
-# Generar la llave de la aplicación
+# Generar la llave única de la aplicación
 php artisan key:generate
 
-# Crear las tablas (clientes y ordenes) en MySQL
-php artisan migrate
+# Configurar credenciales de DB en el archivo .env y ejecutar las migraciones
+php artisan migrate:fresh
 
-# Levantar el servidor de la API
+# Levantar el servidor de desarrollo para la API
 php artisan serve
+3. Cómo levantar el Frontend (React)
+En una terminal independiente, ubicarse en la raíz del monorepo y ejecutar:
 
-## 3. Cómo levantar el Frontend (React)
+Bash
 # Ingresar a la carpeta del frontend
 cd frontend
 
-# Instalar las dependencias de Node (React, Axios, etc.)
+# Instalar las dependencias de Node
 npm install
 
-# Levantar el entorno de desarrollo de Vite
+# Iniciar el servidor de desarrollo de Vite
 npm run dev
+4. Estructura del Proyecto (Monorepo)
+/backend: Contiene la lógica del servidor, modelos (Customer, Order), controladores y migraciones desarrolladas en Laravel.
 
-## 4. Evidencias de Funcionamiento
-Al ingresar a la aplicación web, el evaluador podrá comprobar:
-
-#CRUD Completo de Clientes: Capacidad de registrar, visualizar, editar y eliminar clientes reales en la base de datos a través de peticiones asíncronas con Axios.
-
-#CRUD Completo de Órdenes: Gestión dinámica del listado de órdenes conectadas a la API REST.
-
-#Manejo de Estados: La interfaz (React) se actualiza de manera instantánea al ejecutar acciones (Crear/Editar/Borrar) sin necesidad de recargar la página, gracias al uso de Hooks (useState, useEffect).
-
-#Manejo de Errores: Validaciones en el frontend y capturas de error en las peticiones HTTP (try/catch).
+/frontend: Contiene la interfaz de usuario, componentes y servicios de consumo de API desarrollados en React.
