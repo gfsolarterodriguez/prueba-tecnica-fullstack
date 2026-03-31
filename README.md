@@ -35,6 +35,7 @@ cd backend
 composer install
 
 # Crear el archivo de configuración de entorno
+*Abre el .env y configura tus credenciales de base de datos (DB_DATABASE, DB_USERNAME, DB_PASSWORD).
 cp .env.example .env
 
 # Generar la llave única de la aplicación
@@ -48,16 +49,16 @@ php artisan serve
 ```
 ## 3. Cómo levantar el Frontend (React)
 En una terminal independiente, ubicarse en la raíz del monorepo y ejecutar:
-
-### Ingresar a la carpeta del frontend:
+```bash
+# Ingresar a la carpeta del frontend:
 cd frontend
 
-### Instalar las dependencias de Node:
+# Instalar las dependencias de Node:
 npm install
 
-### Iniciar el servidor de desarrollo de Vite.
+# Iniciar el servidor de desarrollo de Vite.
 npm run dev
-
+```
 ## 4. Estructura del Proyecto (Monorepo)
 * Backend: Contiene la lógica del servidor, modelos (Customer, Order), controladores y migraciones desarrolladas en Laravel.
 

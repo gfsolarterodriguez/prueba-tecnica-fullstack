@@ -56,7 +56,7 @@ export function Clientes() {
         // Agregamos la respuesta a la lista
         // Actualizamos la lista local
         setClientes(clientes.map(c => c.id === editandoId ? respuesta.data : c));
-        setFormulario({ fullName: '', email: '', phone: '' });
+        setFormulario({ fullName: '', email: '', phone: '', isActive: true,});
         setMostrarFormulario(false);
         setEditandoId(null);
       } else {
@@ -66,7 +66,7 @@ export function Clientes() {
       }
 
       // Limpiamos el formulario
-      setFormulario({ fullName: '', email: '', phone: '' });
+      setFormulario({ fullName: '', email: '', phone: '', isActive: true,});
       setMostrarFormulario(false);
     } catch (error) {
         console.error("--- DEBUG DE ERROR ---");
@@ -119,7 +119,7 @@ export function Clientes() {
         onClick={() => {
             setMostrarFormulario(!mostrarFormulario);
             setEditandoId(null);
-            setFormulario({ fullName: '', email: '', phone: '' });
+            setFormulario({ fullName: '', email: '', phone: '', isActive: true });
         }}
         className="btn btn-success"
         style={{ marginBottom: "15px" }}
@@ -159,7 +159,7 @@ export function Clientes() {
           </div>
 
           <div className="form-group">
-            <label>
+            <label className="checkbox-container">
               <input
                 type="checkbox"
                 name="isActive"
